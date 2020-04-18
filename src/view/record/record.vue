@@ -1,7 +1,7 @@
 <template>
   <div class='record'>
       <div class="title">
-        <svg-icon name="mine3" class="title-icon" ></svg-icon>
+        <icon name="mine3" class="title-icon" ></icon>
         <h4>全部记录</h4>  
       </div>
       <div class="center">

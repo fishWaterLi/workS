@@ -2,6 +2,8 @@
 require('./apple')
 require('./mine1')
 require('./mine10')
+require('./mine11')
+require('./mine12')
 require('./mine2')
 require('./mine3')
 require('./mine5')

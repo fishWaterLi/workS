@@ -14,6 +14,10 @@ const router = new Router({
             component:login
         },
         {
+            path: '/download',
+            component:resolve=>require(['./view/download'],resolve)
+        },
+        {
             path:'/user',
             component:resolve=>require(['./view/user/user'],resolve),
             children:[

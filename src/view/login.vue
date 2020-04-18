@@ -42,7 +42,7 @@
                   </div>
                 <!-- <qrcodeLogin></qrcodeLogin> -->
         </div> 
-        <div class="login" v-show="isPwdLogin">
+        <div class="login" v-show="!isPwdLogin">
           <div class='login-toper'>
             <div class="login-topl">
                 <!-- <span class="traingle">></span> -->
@@ -67,10 +67,10 @@
                         </div>
                         <div class="login-footer">
                           <span class="lf-l">还没有手机WikiPay ?</span> 
-                          <span class="lf-r" @click="$router.push({path:'/downlod'})">下载wikipay</span>
+                          <span class="lf-r" @click="$router.push('/download')">下载wikipay</span>
                         </div>
             </div>
-        <div class="pwd-login" v-if="!isPwdLogin">
+        <div class="pwd-login" v-if="isPwdLogin">
           <div class="qrcodeImg" @click='switchto'></div>
           <div class="top">
             <div class="sweep-login"> 
@@ -98,8 +98,8 @@
       <h4 class="pwd">密码</h4>
       <!-- <div class="length"></div> -->
       <input type="password" placeholder="输入登陆密码" class="pass" v-model="pwd">
-       <h4 class='captcha-txt' v-show="isShowCaptcha">验证码</h4>
-       <div class="captcha" v-show="isShowCaptcha">
+       <h4 class='captcha-txt' v-if="isShowCaptcha">验证码</h4>
+       <div class="captcha" v-if="isShowCaptcha">
           <input type="text" class="captcha-left" placeholder="输入验证码" v-model="captcha">
           <div class="captcha-right" :style="`background:url(${captchaImg}) no-repeat center`"></div>
        </div>
@@ -120,27 +120,29 @@ import headers from './components/header/headers'
 import icon from './components/icon/icon'
 import footers from './components/footer/footers'
 import {mapMutations} from 'vuex'
+import axios from 'axios'
   export default {
         name:'layout',
         data(){
             return {
                 bg:'',
-                lgToken:'',
                 isPwdLogin: false,
                 isShowCaptcha: false,
                 userName:'',
                 pwd:'',
                 flagList: [],//国旗列表
-                lgToken:'',
+                lgToken:'',   
                 qrcodeData:'',  //二维码图形
                 captchaId:'', //验证码序列号
                 flagCode:'',  //国家区号
                 flag:'',      //旗帜地址
                 captcha:'',   //验证码
                 captchaImg:'',
-                }
+                qrcodeStatus:'',
+                timer: null,
+            }
         },
-        components:{
+        components: {
           headers,
           icon,
           footers
@@ -149,6 +151,17 @@ import {mapMutations} from 'vuex'
           this.flagCode = '0086';
           this.flag = 'https://img.wikifx.com/flag/7d8833382673bab2/CN.png_wiki-template-global';
           this.getQrcode();
+          // 监测二维码
+          if (this.timer){
+            clearInterval(this.timer);
+          } else {
+            this.timer = setInterval(()=> {
+              this.scanQrcode();
+            },1000);
+          }
+        },
+        destroyed(){
+          clearInterval(this.timer);
         },
         methods:{
          ...mapMutations(['changeLogin']),
@@ -158,7 +171,6 @@ import {mapMutations} from 'vuex'
           this.flagCode = this.flagList[key].code;
           this.flag = this.flagList[key].flag;
          },
-
          switchto(){
            if(this.isPwdLogin == true){
              if(this.flagList.length == 0){
@@ -168,57 +180,77 @@ import {mapMutations} from 'vuex'
             return this.isPwdLogin=!this.isPwdLogin
           },
 
+        //检测二维码状态
+          scanQrcode(){
+            if(this.lgToken.length > 0) {
+              this.$scanQrcode(this.lgToken, res=>{
+                if(res.code == 1010045 || res.code == 0){
+                  clearInterval(this.timer);
+                  if (res.code == 0){
+<<<<<<< HEAD
+                      this.changeLogin({Authorization:res.data.token})
+                      this.$router.push('/user');
+=======
+                    this.changeLogin({Authorization:res.data.token})
+                    this.$router.push('/user');
+>>>>>>> c1e8f71215131b53c2afaf80d6a9ab744b0398c3
+                  }
+                }
+                this.qrcodeStatus = res.msg;
+              }); 
+            }
+        },
         //获取二维码信息
         getQrcode(){
             this.$getQrcode('', res=>{
               if(res.code == 0) {
                 this.qrcodeData = res.data.data;
-                this.lgToken = res.data.lgToken;
+                this.lgToken = res.data.lgToken; 
               }else{
                 this.$Message.error(res.msg);
               }
           });
-        },
-
+        },   
         //获取国旗
         getFlags(){
           this.$getFlags('', res=>{
               if(res.code == 0) {
-                  this.flagList = res.data.flags;
+                this.flagList = res.data.flags;
               }else{
-                  this.$Message.error(res.msg)
+                this.$Message.error(res.msg)
               }
           });
         },
 
       // 账号密码登录业务逻辑
         login(){
-            if(this.userName==''){ 
+            if(this.userName == ''){ 
               this.$Message.error('请输入用户名');
               return
             } 
-            if(this.pwd==''){
+            if(this.pwd == ''){
               this.$Message.error('请输入密码');
               return
             }
             let params = {          
-                areaCode: this.flagCode,
-                userName: this.userName,
-                pwd:      this.pwd
+              areaCode: this.flagCode,
+              userName: this.userName,
+              pwd:      this.pwd
             }
-            if(this.isShowCaptcha = true){
-              if (this.captcha.length > 0 ) {
+            if(this.isShowCaptcha == true && this.captcha.length > 0 ){
                 params.id = this.captchaId;
                 params.digits = this.captcha;
-              }
             }
             this.$phoneLogin(params,(res)=>{
-             if(res.code == 0){
+              if(res.code == 0){
                 this.isShowCaptcha = false;
-                this.userToken = `res.data.token`
-                this.changeLogin({Authorization:this.userToken})
-                this.$router.push('/mine');
+                this.changeLogin({Authorization:res.data.token})
+                this.$router.push('/user');
+<<<<<<< HEAD
              } else if (res.code == 1010008) {
+=======
+              } else if (res.code == 1010008 || res.code == 1010049) {
+>>>>>>> c1e8f71215131b53c2afaf80d6a9ab744b0398c3
                 this.$Message.error(res.msg);
                 this.isShowCaptcha = true;
                 this.$getCaptchaid('',(res)=>{
@@ -228,26 +260,26 @@ import {mapMutations} from 'vuex'
                     }
                     this.captchaId = res.data.captchaId;
                     this.captchaImg = this.$getCaptcha(this.captchaId);
-                    console.log(this.captchaImg);
                   }
                 })
-            }else {
+              }else{
                 this.$Message.error(res.msg);
-            }
-        })
+              }
+          })
       } 
-  }
+    }
   }
 </script>
 <style scoped lang='stylus'>
     .layout
-       height 1140px
+       height 800px
        width 100%
        background-image url('../assets/imgs/Group3.png')
        position relative
       .content-bottom
           position relative
           margin 0 auto
+          margin-bottom 200px
           overflow hidden
           .left
             width 22%

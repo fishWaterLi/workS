@@ -10,14 +10,13 @@ export default {
 </script>
 <style scoped lang='stylus'>
     .footer
-        width:592px;
-        height:13px;
         font-size:12px;
         font-family:MicrosoftYaHei;
         color:rgba(204,204,204,1);
         line-height:12px;
-        margin 0 auto
-        position absolute
-        bottom 0
-        // left 0
+        text-align center
+        height:50px;
+        line-height 50px
+        background:rgba(4,14,42,1);
+        box-shadow 10px 10px 5px rgba(4,14,42,.5)
 </style>

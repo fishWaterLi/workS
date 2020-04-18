@@ -122,7 +122,17 @@ const get = (url, params, success) => {
             console.log(err);
         })
     }
-    // 上传图片
+
+//restful api接口获取
+const restGet = (url, param, success) => {
+    axios.get(global + url + param).then(res => {
+        success(res.data);
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
+// 上传图片
 const upImg = (url, data, handle) => {
     let instance = axios.create({
         baseURL: global,
@@ -146,10 +156,10 @@ const install = (Vue) => {
     Vue.prototype.$getCaptchaid = (params,success) => get('/web/pc/login/captchaid',params,success);
     
     Vue.prototype.$getCaptcha = (id) => getCaptchaUrl(id);
-    //获取验证码
-   // Vue.prototype.$getCaptcha = (params,success) => get('/web/pc/login/captcha',params,success);
 
-    //获取二维码
+    //二维码状态检测
+    Vue.prototype.$scanQrcode = (param, success) => restGet("/web/pc/qrcode/",param,success)
+   
     Vue.prototype.$getQrcode = (params,success) => get('/web/pc/qrcode ',params,success);
 
     //获取国旗

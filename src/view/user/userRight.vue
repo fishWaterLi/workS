@@ -18,7 +18,7 @@
                                </div>
                                <div class="right">USD</div>
                            </div>
-                           <div class="c-br">
+                           <!-- <div class="c-br">
                                <div class="left">
                                    <div class="icon"></div>
                                    <div class="txt">昨日收益:</div>
@@ -29,16 +29,24 @@
                                    <div class="icon"></div>
                                    <div class="txt">七日年化收益率：1.50% </div>
                                </div>
-                           </div>
+                           </div> -->
                        </div>
                    </div>
-         <ul class="tabs">
-            <li class='first'>最近记录</li>
-            <li class="second">充值</li>
-            <li class="third">提现</li>
-            <li class="forth">转账</li>
-        </ul>
-           <Table height="200" :columns="columns1" :data="data2"></Table>
+         <Tabs value="name1">
+            <TabPane label="充值账单" name="name1">
+                 <Table height="400" :columns="columns1" :data="data2"></Table>
+            </TabPane>
+            <TabPane label="充值中" name="name2"> 
+                <Table height="400" :columns="columns1" :data="data2"></Table>
+            </TabPane>
+            <TabPane label="成功" name="name3">
+                <Table height="400" :columns="columns1" :data="data2"></Table>
+            </TabPane>
+            <TabPane label="失败" name="name4">
+                <Table height="400" :columns="columns1" :data="data2"></Table>
+             </TabPane>
+        </Tabs>
+  
     </div>
 </template>
 

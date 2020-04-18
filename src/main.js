@@ -19,8 +19,9 @@ import VueI18n from 'vue-i18n'
 import axios from './axios/http'
 import common from './common'
 import SvgIcon from 'vue-svgicon'
+import animate from 'animate.css'
 Vue.use(SvgIcon, {
-    tagName: 'svg-icon'
+    tagName: 'icon'
 });
 Vue.use(common)
 Vue.use(axios)

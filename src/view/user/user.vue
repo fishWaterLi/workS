@@ -44,7 +44,7 @@
     <Menu  active-name="1-2" :open-names="['1']" style="width:268px;backgroundColor:rgba(245,246,250,1)">
                 <Submenu name="1">
                     <template slot="title" >
-                    <div class='title' >
+                    <div class='title' @click="$router.push('/user')">
                         <div class="icon icon-one"></div>  
                         <div class="txt">我的资产</div> 
                     </div>
